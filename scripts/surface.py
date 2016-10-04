@@ -29,8 +29,12 @@ def mean_project(stack, surface, zabove, zbelow):
             z_index = surface[x, y]
             z_min = z_index - zabove
             z_min = max(0, z_min)
+            if z_min >= zdim:
+                z_min = zdim - 1
             z_max = z_index + 1 + zbelow
             z_max = min(z_max, zdim)
+            if z_max <= z_min:
+                z_max = z_min + 1
             value = np.mean(stack[x, y, z_min:z_max])
             projection[x, y] = value
     return projection.view(Image)
@@ -50,4 +54,8 @@ def test_mean_project():
     assert np.array_equal(mean_project(stack, surface, 7, 0),
                           [[2]])
     assert np.array_equal(mean_project(stack, surface, -1, 7),
-                          [[7]]), mean_project(stack, surface, -1, 7)
+                          [[7]])
+    assert np.array_equal(mean_project(stack, surface, -6, 7),
+                          [[0]])
+    assert np.array_equal(mean_project(stack, surface, 7, -6),
+                          [[2]])
