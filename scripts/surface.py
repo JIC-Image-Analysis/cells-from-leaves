@@ -44,6 +44,12 @@ def mean_project(stack, surface, zabove, zbelow):
     return _project(stack, surface, zabove, zbelow, np.mean)
 
 
+@transformation
+def max_project(stack, surface, zabove, zbelow):
+    """Return max intensity from stack based on surface."""
+    return _project(stack, surface, zabove, zbelow, np.max)
+
+
 def test_mean_project():
     stack = np.ones((1, 1, 10))
     for i in range(10):
