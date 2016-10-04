@@ -8,6 +8,8 @@ from jicbioimage.core.image import Image
 from jicbioimage.core.transform import transformation
 from jicbioimage.core.io import AutoName, AutoWrite
 
+from utils import get_microscopy_collection
+
 __version__ = "0.4.0"
 
 AutoName.prefix_format = "{:03d}_"
@@ -22,8 +24,8 @@ def identity(image):
 def analyse_file(fpath, output_directory):
     """Analyse a single file."""
     logging.info("Analysing file: {}".format(fpath))
-    image = Image.from_file(fpath)
-    image = identity(image)
+
+    microscopy_collection = get_microscopy_collection(fpath)
 
 
 def main():
