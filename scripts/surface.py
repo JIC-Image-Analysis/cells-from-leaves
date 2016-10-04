@@ -19,9 +19,7 @@ def surface_from_stack(stack, **kwargs):
     return surface.view(Image)
 
 
-@transformation
-def mean_project(stack, surface, zabove, zbelow):
-    """Return mean intensity from stack based on surface."""
+def _project(stack, surface, zabove, zbelow, proj_method):
     projection = np.zeros(surface.shape, dtype=np.uint8)
     xdim, ydim, zdim = stack.shape
     for x in range(xdim):
@@ -35,9 +33,15 @@ def mean_project(stack, surface, zabove, zbelow):
             z_max = min(z_max, zdim)
             if z_max <= z_min:
                 z_max = z_min + 1
-            value = np.mean(stack[x, y, z_min:z_max])
+            value = proj_method(stack[x, y, z_min:z_max])
             projection[x, y] = value
     return projection.view(Image)
+
+
+@transformation
+def mean_project(stack, surface, zabove, zbelow):
+    """Return mean intensity from stack based on surface."""
+    return _project(stack, surface, zabove, zbelow, np.mean)
 
 
 def test_mean_project():
