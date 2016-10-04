@@ -1,0 +1,8 @@
+---
+wall_channel: 1
+wall_percentile_filter_percentile: 95
+wall_percentile_filter_size: 2
+wall_zabove: 0
+wall_zbelow: 0
+wall_threshold_adaptive_block_size: 201
+wall_remove_small_objects_min_size: 20
