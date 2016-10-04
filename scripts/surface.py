@@ -56,6 +56,6 @@ def test_mean_project():
     assert np.array_equal(mean_project(stack, surface, -1, 7),
                           [[7]])
     assert np.array_equal(mean_project(stack, surface, -6, 7),
-                          [[0]])
+                          [[9]])
     assert np.array_equal(mean_project(stack, surface, 7, -6),
-                          [[2]])
+                          [[0]])
