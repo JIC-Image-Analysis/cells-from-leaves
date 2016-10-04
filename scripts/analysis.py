@@ -10,8 +10,11 @@ from jicbioimage.core.io import AutoName, AutoWrite
 
 from utils import get_microscopy_collection
 from parameters import Parameters
-from surface import surface_from_stack
-from segment import segment_cells
+from surface import surface_from_stack, max_project
+from segment import (
+    segment_cells,
+    percentile_filter,
+)
 
 __version__ = "0.4.0"
 
@@ -35,6 +38,16 @@ def analyse_file(fpath, output_directory, **kwargs):
     surface = surface_from_stack(wall_stack, **kwargs)
 
     cells = segment_cells(wall_stack, surface, **kwargs)
+
+    marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
+    marker_stack = identity(marker_stack)
+    marker_stack = percentile_filter(marker_stack,
+                                     kwargs["marker_percentile_filter_percentile"],
+                                     kwargs["marker_percentile_filter_size"])
+    marker_projection = max_project(marker_stack,
+                                    surface,
+                                    zabove=kwargs["marker_zabove"],
+                                    zbelow=kwargs["marker_zbelow"])
 
 
 def main():
