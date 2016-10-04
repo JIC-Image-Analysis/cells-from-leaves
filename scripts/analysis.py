@@ -10,6 +10,8 @@ from jicbioimage.core.io import AutoName, AutoWrite
 
 from utils import get_microscopy_collection
 from parameters import Parameters
+from surface import surface_from_stack
+from segment import segment_cells
 
 __version__ = "0.4.0"
 
@@ -30,6 +32,9 @@ def analyse_file(fpath, output_directory, **kwargs):
 
     wall_stack = microscopy_collection.zstack(c=kwargs["wall_channel"])
     wall_stack = identity(wall_stack)
+    surface = surface_from_stack(wall_stack, **kwargs)
+
+    cells = segment_cells(wall_stack, surface, **kwargs)
 
 
 def main():
