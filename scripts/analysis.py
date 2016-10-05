@@ -4,7 +4,6 @@ import os
 import logging
 import argparse
 
-from jicbioimage.core.image import Image
 from jicbioimage.core.transform import transformation
 from jicbioimage.core.io import AutoName, AutoWrite
 
@@ -16,6 +15,7 @@ from projection import (
     project_wall,
     project_marker,
 )
+from annotation import write_annotated_images
 
 __version__ = "0.4.0"
 
@@ -45,6 +45,9 @@ def analyse_file(fpath, output_directory, **kwargs):
     marker_stack = identity(marker_stack)
     marker_projection = project_marker(marker_stack, surface, **kwargs)
 
+    write_annotated_images(cells, wall_projection, marker_projection,
+                           output_directory)
+
 
 def main():
     # Parse the command line arguments.
@@ -64,7 +67,6 @@ def main():
 
     # Read in the parameters.
     params = Parameters.from_file(args.parameters_file)
-
 
     # Create the output directory if it does not exist.
     if not os.path.isdir(args.output_dir):
