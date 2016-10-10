@@ -11,3 +11,4 @@ marker_percentile_filter_percentile: 50
 marker_percentile_filter_size: 2
 marker_zabove: 0
 marker_zbelow: 0
+marker_min_intensity: 50
