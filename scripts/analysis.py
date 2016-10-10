@@ -40,20 +40,51 @@ def analyse_file(fpath, output_directory, **kwargs):
 
     microscopy_collection = get_microscopy_collection(fpath)
 
-    wall_stack = microscopy_collection.zstack(c=kwargs["wall_channel"])
-    wall_stack = identity(wall_stack)
-    surface = surface_from_stack(wall_stack, **kwargs)
-    wall_projection = project_wall(wall_stack, surface, **kwargs)
+#   wall_stack = microscopy_collection.zstack(c=kwargs["wall_channel"])
+#   wall_stack = identity(wall_stack)
+#   surface = surface_from_stack(wall_stack, **kwargs)
+#   wall_projection = project_wall(wall_stack, surface, **kwargs)
 
-    cells = segment_cells(wall_projection, surface, **kwargs)
+#   cells = segment_cells(wall_projection, surface, **kwargs)
+
+#   marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
+#   marker_stack = identity(marker_stack)
+#   marker_stack = remove_noise(marker_stack, kwargs["marker_min_intensity"])
+#   marker_projection = project_marker(marker_stack, surface, **kwargs)
+
+#   write_annotated_images(cells, wall_projection, marker_projection,
+#                          output_directory)
+
+    wall_stack = microscopy_collection.zstack(c=kwargs["wall_channel"])
+    wall_surface = surface_from_stack(wall_stack, **kwargs)
 
     marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
-    marker_stack = identity(marker_stack)
-    marker_stack = remove_noise(marker_stack, kwargs["marker_min_intensity"])
-    marker_projection = project_marker(marker_stack, surface, **kwargs)
+    marker_surface = surface_from_stack(marker_stack, **kwargs)
 
-    write_annotated_images(cells, wall_projection, marker_projection,
-                           output_directory)
+    from projection import max_project
+    from jicbioimage.transform import max_intensity_projection
+
+    above = 2
+    below = 2
+
+    max_project(marker_stack, wall_surface, above, below)
+    max_intensity_projection(marker_stack)
+
+    marker_stack = remove_noise(marker_stack, 50)
+    max_project(marker_stack, wall_surface, above, below)
+    max_intensity_projection(marker_stack)
+
+    marker_stack = remove_noise(marker_stack, 75)
+    max_project(marker_stack, wall_surface, above, below)
+    max_intensity_projection(marker_stack)
+
+    marker_stack = remove_noise(marker_stack, 100)
+    max_project(marker_stack, wall_surface, above, below)
+    max_intensity_projection(marker_stack)
+
+    marker_stack = remove_noise(marker_stack, 125)
+    max_project(marker_stack, wall_surface, above, below)
+    max_intensity_projection(marker_stack)
 
 
 def main():
