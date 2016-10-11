@@ -49,8 +49,8 @@ def analyse_file(fpath, output_directory, **kwargs):
 
     marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
     marker_stack = identity(marker_stack)
-    marker_stack = remove_noise(marker_stack, kwargs["marker_min_intensity"])
     marker_projection = project_marker(marker_stack, surface, **kwargs)
+    marker_projection = remove_noise(marker_projection, kwargs["marker_min_intensity"])
 
     write_annotated_images(cells, wall_projection, marker_projection,
                            output_directory)

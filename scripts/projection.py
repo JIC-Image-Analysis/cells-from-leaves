@@ -58,9 +58,6 @@ def project_wall(wall_stack, surface, **kwargs):
 @transformation
 def project_marker(marker_stack, surface, **kwargs):
     """Return marker signal projected from surface."""
-    marker_stack = percentile_filter(marker_stack,
-                                     kwargs["marker_percentile_filter_percentile"],
-                                     kwargs["marker_percentile_filter_size"])
     return max_project(marker_stack,
                        surface,
                        zabove=kwargs["marker_zabove"],
