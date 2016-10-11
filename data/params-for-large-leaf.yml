@@ -1,6 +1,7 @@
 ---
 wall_channel: 1
 marker_channel: 0
+surface_percentile: 95
 wall_percentile_filter_percentile: 95
 wall_percentile_filter_size: 2
 wall_zabove: 0

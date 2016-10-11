@@ -9,7 +9,7 @@ from jicbioimage.core.transform import transformation
 def surface_from_stack(stack, **kwargs):
     """Return surface as 2D image where intensity represents z-depth."""
     ydim, xdim, zdim = stack.shape
-    cutoff = np.percentile(stack, 95, axis=2)
+    cutoff = np.percentile(stack, kwargs["surface_percentile"], axis=2)
     surface = np.zeros((ydim, xdim), dtype=np.uint8)
     for zi in range(0, zdim):
         mask = stack[:, :, zi] > cutoff
