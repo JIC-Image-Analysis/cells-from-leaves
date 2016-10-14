@@ -54,7 +54,14 @@ def write_cell_views(fpath_prefix, wall_projection, marker_projection, region, c
     marker_ann[np.logical_not(dilated_region)] = (0, 0, 0)
     ann[np.logical_not(dilated_region)] = (0, 0, 0)
 
-    rotation = random.randrange(0, 360)
+# If rotation is not 0, 90, 180, 270 the image becomes larger than then input
+# and the scaling gets messed up. The scaling may not matter since downstream
+# processing will use unit vectors around the center of the cell (the centroid)
+# but for now I want to create annotations where the user clicks are reflected
+# in the ouput.
+#   rotation = random.randrange(0, 360)
+    rotation = random.choice([0, 90, 180, 270])
+
     celldata["rotation"] = rotation
     for suffix, annotation in [("-wall", wall_ann),
                                ("-marker", marker_ann),
