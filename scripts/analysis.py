@@ -3,6 +3,7 @@
 import os
 import logging
 import argparse
+import json
 
 from jicbioimage.core.transform import transformation
 from jicbioimage.core.io import AutoName, AutoWrite
@@ -15,7 +16,7 @@ from projection import (
     project_wall,
     project_marker,
 )
-from annotation import write_annotated_images
+from annotation import write_cell_views
 
 __version__ = "0.4.0"
 
@@ -32,6 +33,19 @@ def identity(image):
 def remove_noise(image, min_threshold):
     image[image < min_threshold] = 0
     return image
+
+
+def save_cells(cells, wall_projection, marker_projection, output_directory):
+    d = os.path.join(output_directory, "annotated-cells")
+    if not os.path.isdir(d):
+        os.mkdir(d)
+    for i in cells.identifiers:
+        region = cells.region_by_identifier(i)
+        celldata = dict(cell_id=i, centroid=list(region.centroid), area=region.area)
+        fpath_prefix = os.path.join(d, "cell-{:05d}".format(i))
+        write_cell_views(fpath_prefix, wall_projection, marker_projection, region, celldata)
+        with open(fpath_prefix + ".json", "w") as fh:
+            json.dump(celldata, fh)
 
 
 def analyse_file(fpath, output_directory, **kwargs):
@@ -52,8 +66,7 @@ def analyse_file(fpath, output_directory, **kwargs):
     marker_projection = project_marker(marker_stack, surface, **kwargs)
     marker_projection = remove_noise(marker_projection, kwargs["marker_min_intensity"])
 
-    write_annotated_images(cells, wall_projection, marker_projection,
-                           output_directory)
+    save_cells(cells, wall_projection, marker_projection, output_directory)
 
 
 def main():
