@@ -10,7 +10,7 @@ import scipy.ndimage
 from jicbioimage.illustrate import AnnotatedImage
 
 
-def post_process_annotation(ann, dilated_region, celldata, crop=True, rotate=True,
+def post_process_annotation(ann, dilated_region, celldata, rotation, crop=True, rotate=True,
                             enlarge=True, padding=True):
 
     if crop:
@@ -38,10 +38,7 @@ def post_process_annotation(ann, dilated_region, celldata, crop=True, rotate=Tru
     if enlarge:
         ann = scipy.misc.imresize(ann, 3.0, "nearest").view(AnnotatedImage)
 
-    if rotate:
-        rotation = random.randrange(0, 360)
-        ann = scipy.ndimage.rotate(ann, rotation, order=0).view(AnnotatedImage)
-        celldata["rotation"] = rotation
+    ann = scipy.ndimage.rotate(ann, rotation, order=0).view(AnnotatedImage)
 
     return ann
 
@@ -57,11 +54,13 @@ def write_cell_views(fpath_prefix, wall_projection, marker_projection, region, c
     marker_ann[np.logical_not(dilated_region)] = (0, 0, 0)
     ann[np.logical_not(dilated_region)] = (0, 0, 0)
 
+    rotation = random.randrange(0, 360)
+    celldata["rotation"] = rotation
     for suffix, annotation in [("-wall", wall_ann),
                                ("-marker", marker_ann),
                                ("-combined", ann)]:
         fpath = fpath_prefix + suffix + ".png"
-        annotation = post_process_annotation(annotation, dilated_region, celldata, crop,
-                                             rotate, enlarge, padding)
+        annotation = post_process_annotation(annotation, dilated_region, celldata,
+                                             rotation, crop, enlarge, padding)
 
         scipy.misc.imsave(fpath, annotation)
