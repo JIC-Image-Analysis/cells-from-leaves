@@ -21,7 +21,7 @@ from geometry_mapper import original_image_point
 __version__ = "0.1.0"
 
 
-def save_annotated_leaf(input_image, output_file, **kwargs):
+def save_annotated_leaf(input_dir, input_image, output_file, **kwargs):
     """Write out annotated leaf image."""
     microscopy_collection = get_microscopy_collection(input_image)
 
@@ -37,21 +37,32 @@ def save_annotated_leaf(input_image, output_file, **kwargs):
     marker_ann = AnnotatedImage.from_grayscale(marker_projection, (0, 1, 0))
     ann = wall_ann + marker_ann
 
-    with open("output/cell-00145.json") as fh:
-        celldata = json.load(fh)
+    json_fpaths = [os.path.join(input_dir, f)
+                   for f in os.listdir(input_dir)
+                   if f.endswith(".json")]
 
-    frac_pt = celldata["clicked_y"], celldata["clicked_x"]
-    rel_pt = tuple([i - 0.5 for i in frac_pt])
+    y_key = "y_value_in_normalised_frame"
+    x_key = "x_value_in_normalised_frame"
+    for fpath in json_fpaths:
+        with open(fpath) as fh:
+            celldata = json.load(fh)
 
-    marker_pt = original_image_point(rel_point=rel_pt,
-                                     rotation=celldata["rotation"],
-                                     ydim=celldata["ydim"],
-                                     xdim=celldata["xdim"],
-                                     dy_offset=celldata["dy_offset"],
-                                     dx_offset=celldata["dx_offset"])
-    print(marker_pt)
+        if y_key not in celldata:
+            continue
+        if x_key not in celldata:
+            continue
+        print(fpath)
+        frac_pt = celldata[y_key], celldata[x_key]
+        rel_pt = tuple([i - 0.5 for i in frac_pt])
 
-    ann.draw_line(marker_pt, celldata["centroid"], (255, 255, 255))
+        marker_pt = original_image_point(rel_point=rel_pt,
+                                         rotation=celldata["rotation"],
+                                         ydim=celldata["ydim"],
+                                         xdim=celldata["xdim"],
+                                         dy_offset=celldata["dy_offset"],
+                                         dx_offset=celldata["dx_offset"])
+
+        ann.draw_line(marker_pt, celldata["centroid"], (255, 255, 255))
 
     with open(output_file, "wb") as fh:
         fh.write(ann.png())
@@ -59,12 +70,15 @@ def save_annotated_leaf(input_image, output_file, **kwargs):
 def main():
     # Parse the command line arguments.
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input_dir", help="Input directory (with json files)")
     parser.add_argument("input_image", help="Input image")
     parser.add_argument("parameters_file", help="Parameters file")
     parser.add_argument("output_file", help="Output file")
     args = parser.parse_args()
 
-    # Check that the input file exists.
+    # Check that the input directory and files exists.
+    if not os.path.isdir(args.input_dir):
+        parser.error("{} not a directory".format(args.input_dir))
     if not os.path.isfile(args.input_image):
         parser.error("{} not a file".format(args.input_image))
     if not os.path.isfile(args.parameters_file):
@@ -88,7 +102,7 @@ def main():
     logging.info("Parameters: {}".format(params))
 
     # Run the analysis.
-    save_annotated_leaf(args.input_image, args.output_file, **params)
+    save_annotated_leaf(args.input_dir, args.input_image, args.output_file, **params)
 
 
 if __name__ == "__main__":
