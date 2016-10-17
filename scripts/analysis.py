@@ -29,12 +29,6 @@ def identity(image):
     return image
 
 
-@transformation
-def remove_noise(image, min_threshold):
-    image[image < min_threshold] = 0
-    return image
-
-
 def save_cells(cells, wall_projection, marker_projection, output_directory):
     d = os.path.join(output_directory, "annotated-cells")
     if not os.path.isdir(d):
@@ -64,7 +58,6 @@ def analyse_file(fpath, output_directory, **kwargs):
     marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
     marker_stack = identity(marker_stack)
     marker_projection = project_marker(marker_stack, surface, **kwargs)
-    marker_projection = remove_noise(marker_projection, kwargs["marker_min_intensity"])
 
     save_cells(cells, wall_projection, marker_projection, output_directory)
 

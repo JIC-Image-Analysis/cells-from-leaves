@@ -16,7 +16,6 @@ from projection import (
     project_marker,
 )
 from geometry_mapper import original_image_point
-from analysis import remove_noise
 
 
 __version__ = "0.1.0"
@@ -33,13 +32,12 @@ def save_annotated_leaf(input_image, output_file, **kwargs):
     marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
     # Refactor with analysis script to ensure always in sync.
     marker_projection = project_marker(marker_stack, surface, **kwargs)
-    marker_projection = remove_noise(marker_projection, kwargs["marker_min_intensity"])
 
     wall_ann = AnnotatedImage.from_grayscale(wall_projection, (1, 0, 0))
     marker_ann = AnnotatedImage.from_grayscale(marker_projection, (0, 1, 0))
     ann = wall_ann + marker_ann
 
-    with open("output/cell-00010.json") as fh:
+    with open("output/cell-00145.json") as fh:
         celldata = json.load(fh)
 
     frac_pt = celldata["clicked_y"], celldata["clicked_x"]

@@ -44,6 +44,12 @@ def percentile_filter(stack, p, size):
 
 
 @transformation
+def remove_noise(image, min_threshold):
+    image[image < min_threshold] = 0
+    return image
+
+
+@transformation
 def project_wall(wall_stack, surface, **kwargs):
     """Return wall signal projected from surface."""
     wall_signal = percentile_filter(wall_stack,
@@ -58,10 +64,11 @@ def project_wall(wall_stack, surface, **kwargs):
 @transformation
 def project_marker(marker_stack, surface, **kwargs):
     """Return marker signal projected from surface."""
-    return max_project(marker_stack,
+    p = max_project(marker_stack,
                        surface,
                        zabove=kwargs["marker_zabove"],
                        zbelow=kwargs["marker_zbelow"])
+    return remove_noise(p, kwargs["marker_min_intensity"])
 
 
 def test_mean_project():
