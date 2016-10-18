@@ -41,8 +41,8 @@ def save_annotated_leaf(input_dir, input_image, output_file, **kwargs):
                    for f in os.listdir(input_dir)
                    if f.endswith(".json")]
 
-    y_key = "y_value_in_normalised_frame"
-    x_key = "x_value_in_normalised_frame"
+    y_key = "normalised_marker_y_coord"
+    x_key = "normalised_marker_x_coord"
     for fpath in json_fpaths:
         with open(fpath) as fh:
             celldata = json.load(fh)
