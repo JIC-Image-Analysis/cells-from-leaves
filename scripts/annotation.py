@@ -10,49 +10,51 @@ import scipy.ndimage
 from jicbioimage.illustrate import AnnotatedImage
 
 
-def post_process_annotation(ann, dilated_region, celldata, rotation, crop=True, rotate=True,
-                            enlarge=True, padding=True):
+def post_process_annotation(ann, dilated_region, celldata, rotation):
 
-    if crop:
-        yis, xis = dilated_region.index_arrays
-        ymin, ymax = np.min(yis), np.max(yis)
-        xmin, xmax = np.min(xis), np.max(xis)
-        ann = ann[ymin:ymax,
-                  xmin:xmax]
-        celldata["dy_offset"] = ymin
-        celldata["dx_offset"] = xmin
+    # Crop box around region.
+    yis, xis = dilated_region.index_arrays
+    ymin, ymax = np.min(yis), np.max(yis)
+    xmin, xmax = np.min(xis), np.max(xis)
+    ann = ann[ymin:ymax,
+              xmin:xmax]
+    celldata["dy_offset"] = ymin
+    celldata["dx_offset"] = xmin
 
-    if padding:
-        ydim, xdim, zdim = ann.shape
-        p = 25
-        pydim = ydim + p + p
-        pxdim = xdim + p + p
-        padded = AnnotatedImage.blank_canvas(width=pxdim, height=pydim)
-        padded[p:ydim+p, p:xdim+p] = ann
-        ann = padded
-        celldata["dy_offset"] -= p
-        celldata["dx_offset"] -= p
-        celldata["ydim"] = pydim
-        celldata["xdim"] = pxdim
+    # Pad cropped box.
+    ydim, xdim, zdim = ann.shape
+    p = 25
+    pydim = ydim + p + p
+    pxdim = xdim + p + p
+    padded = AnnotatedImage.blank_canvas(width=pxdim, height=pydim)
+    padded[p:ydim+p, p:xdim+p] = ann
+    ann = padded
+    celldata["dy_offset"] -= p
+    celldata["dx_offset"] -= p
+    celldata["ydim"] = pydim
+    celldata["xdim"] = pxdim
 
-    if enlarge:
-        ann = scipy.misc.imresize(ann, 3.0, "nearest").view(AnnotatedImage)
+    # Enlarge padded cropped box.
+    ann = scipy.misc.imresize(ann, 3.0, "nearest").view(AnnotatedImage)
 
+    # Rotate the enlarged padded cropped box.
     ann = scipy.ndimage.rotate(ann, rotation, order=0).view(AnnotatedImage)
 
     return ann
 
 
-def write_cell_views(fpath_prefix, wall_projection, marker_projection, region, celldata,
-                     crop=True, rotate=True, enlarge=True, padding=True):
+def write_cell_views(fpath_prefix, wall_projection, marker_projection, region, celldata):
     wall_ann = AnnotatedImage.from_grayscale(wall_projection, (1, 0, 0))
     marker_ann = AnnotatedImage.from_grayscale(marker_projection, (0, 1, 0))
     ann = wall_ann + marker_ann
-    ann.mask_region(region.border, (200, 200, 200))
+    color = (200, 200, 200)
+    ann.mask_region(region.border, color)
+    ann.draw_cross(region.centroid, color)
     dilated_region = region.dilate(20)
     wall_ann[np.logical_not(dilated_region)] = (0, 0, 0)
     marker_ann[np.logical_not(dilated_region)] = (0, 0, 0)
     ann[np.logical_not(dilated_region)] = (0, 0, 0)
+
 
 # If rotation is not 0, 90, 180, 270 the image becomes larger than then input
 # and the scaling gets messed up. The scaling may not matter since downstream
@@ -67,7 +69,7 @@ def write_cell_views(fpath_prefix, wall_projection, marker_projection, region, c
                                ("-marker", marker_ann),
                                ("-combined", ann)]:
         fpath = fpath_prefix + suffix + ".png"
-        annotation = post_process_annotation(annotation, dilated_region, celldata,
-                                             rotation, crop, enlarge, padding)
+        annotation = post_process_annotation(annotation, dilated_region,
+                                             celldata, rotation)
 
         scipy.misc.imsave(fpath, annotation)
