@@ -5,8 +5,10 @@ import logging
 import argparse
 import json
 
+from jicbioimage.core.image import Image
 from jicbioimage.core.transform import transformation
 from jicbioimage.core.io import AutoName, AutoWrite
+from jicbioimage.segment import Region
 
 from utils import get_microscopy_collection
 from parameters import Parameters
@@ -42,7 +44,7 @@ def save_cells(cells, wall_projection, marker_projection, output_directory):
             json.dump(celldata, fh)
 
 
-def analyse_file(fpath, output_directory, **kwargs):
+def analyse_file(fpath, mask, output_directory, **kwargs):
     """Analyse a single file."""
     logging.info("Analysing file: {}".format(fpath))
 
@@ -53,7 +55,7 @@ def analyse_file(fpath, output_directory, **kwargs):
     surface = surface_from_stack(wall_stack, **kwargs)
     wall_projection = project_wall(wall_stack, surface, **kwargs)
 
-    cells = segment_cells(wall_projection, surface, **kwargs)
+    cells = segment_cells(wall_projection, surface, mask, **kwargs)
 
     marker_stack = microscopy_collection.zstack(c=kwargs["marker_channel"])
     marker_stack = identity(marker_stack)
@@ -66,6 +68,7 @@ def main():
     # Parse the command line arguments.
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_file", help="Input file")
+    parser.add_argument("mask_file", help="Mask file")
     parser.add_argument("parameters_file", help="Parameters file")
     parser.add_argument("output_dir", help="Output directory")
     parser.add_argument("--debug", default=False, action="store_true",
@@ -104,7 +107,10 @@ def main():
     logging.info("Parameters: {}".format(params))
 
     # Run the analysis.
-    analyse_file(args.input_file, args.output_dir, **params)
+    mask_im = Image.from_file(args.mask_file)
+    mask = Region.select_from_array(mask_im, 0)
+    identity(mask)
+    analyse_file(args.input_file, mask, args.output_dir, **params)
 
 if __name__ == "__main__":
     main()

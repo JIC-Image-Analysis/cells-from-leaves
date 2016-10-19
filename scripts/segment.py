@@ -16,8 +16,17 @@ from jicbioimage.segment import connected_components, watershed_with_seeds
 def threshold_adaptive_median(image, block_size):
     return skimage.filters.threshold_adaptive(image, block_size=block_size)
 
+@transformation
+def remove_cells_not_in_mask(cells, mask):
+    """Remove cells that that touch 0 pixels in mask."""
+    for i in cells.identifiers:
+        region = cells.region_by_identifier(i)
+        if 0 in mask[region]:
+            cells[region] = 0
+    return cells
 
-def segment_cells(wall_projection, surface, **kwargs):
+
+def segment_cells(wall_projection, surface, mask, **kwargs):
     """Return segmented cells as SegmentedImage."""
 
     seeds = threshold_adaptive_median(wall_projection,
@@ -31,6 +40,7 @@ def segment_cells(wall_projection, surface, **kwargs):
                                  connectivity=1,
                                  background=0)
 
-    segmentation = watershed_with_seeds(-wall_projection,
+    cells = watershed_with_seeds(-wall_projection,
                                         seeds=seeds)
-    return segmentation
+    cells = remove_cells_not_in_mask(cells,  mask)
+    return cells
