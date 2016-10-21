@@ -21,7 +21,7 @@ from geometry_mapper import original_image_point
 __version__ = "0.1.0"
 
 
-def save_annotated_leaf(input_dir, input_image, output_file, **kwargs):
+def save_annotated_leaf(input_dir, input_image, output_file, random, **kwargs):
     """Write out annotated leaf image."""
     microscopy_collection = get_microscopy_collection(input_image)
 
@@ -55,8 +55,11 @@ def save_annotated_leaf(input_dir, input_image, output_file, **kwargs):
         frac_pt = celldata[y_key], celldata[x_key]
         rel_pt = tuple([i - 0.5 for i in frac_pt])
 
+        rotation = celldata["rotation"]
+        if random:
+            rotation = 0
         marker_pt = original_image_point(rel_point=rel_pt,
-                                         rotation=celldata["rotation"],
+                                         rotation=rotation,
                                          ydim=celldata["ydim"],
                                          xdim=celldata["xdim"],
                                          dy_offset=celldata["dy_offset"],
@@ -74,6 +77,7 @@ def main():
     parser.add_argument("input_image", help="Input image")
     parser.add_argument("parameters_file", help="Parameters file")
     parser.add_argument("output_file", help="Output file")
+    parser.add_argument("--random", action="store_true", help="Use random rotation")
     args = parser.parse_args()
 
     # Check that the input directory and files exists.
@@ -102,7 +106,8 @@ def main():
     logging.info("Parameters: {}".format(params))
 
     # Run the analysis.
-    save_annotated_leaf(args.input_dir, args.input_image, args.output_file, **params)
+    save_annotated_leaf(args.input_dir, args.input_image, args.output_file,
+                        args.random, **params)
 
 
 if __name__ == "__main__":
