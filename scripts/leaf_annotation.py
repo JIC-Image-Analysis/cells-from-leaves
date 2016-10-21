@@ -66,6 +66,7 @@ def save_annotated_leaf(input_dir, input_image, output_file, random, **kwargs):
                                          dx_offset=celldata["dx_offset"])
 
         ann.draw_line(marker_pt, celldata["centroid"], (255, 255, 255))
+        ann.draw_cross(celldata["centroid"], (255, 255, 255))
 
     with open(output_file, "wb") as fh:
         fh.write(ann.png())
