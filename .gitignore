@@ -6,3 +6,4 @@ bash_history
 data/*
 !data/*.yml
 output/*
+env/*
