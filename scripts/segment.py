@@ -32,10 +32,10 @@ def segment_cells(wall_projection, surface, mask, **kwargs):
     seeds = threshold_adaptive_median(wall_projection,
                                       block_size=kwargs["wall_threshold_adaptive_block_size"])
     seeds = remove_small_objects(seeds,
-                                 min_size=kwargs["wall_remove_small_objects_min_size"])
+                                 min_size=kwargs["wall_remove_small_objects_in_cell_min_size"])
     seeds = invert(seeds)
     seeds = remove_small_objects(seeds,
-                                 min_size=kwargs["wall_remove_small_objects_min_size"])
+                                 min_size=kwargs["wall_remove_small_objects_in_wall_min_size"])
     seeds = connected_components(seeds,
                                  connectivity=1,
                                  background=0)
