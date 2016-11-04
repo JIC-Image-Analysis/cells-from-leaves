@@ -44,3 +44,14 @@ Now you can run the image analysis.
 ```
 [root@048bd4bd961c /]# python scripts/analysis.py --debug data/ output/
 ```
+
+## Post processing: manual point picking
+
+Post process the data in the ``output/annotated-cells`` directory using
+the [cells-from-leaves-tagger](https://github.com/JIC-Image-Analysis/cells-from-leaves-tagger).
+
+
+## Post processing: generate summary data
+
+- ``scripts/leaf_annotation.py``
+- ``scripts/tensor_csv.py``
