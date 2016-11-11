@@ -34,8 +34,13 @@ def segment_cells(wall_projection, surface, mask, **kwargs):
     seeds = remove_small_objects(seeds,
                                  min_size=kwargs["wall_remove_small_objects_in_cell_min_size"])
     seeds = invert(seeds)
+
+    if "wall_erode_step" in kwargs and kwargs["wall_erode_step"]:
+        seeds = erode_binary(seeds)
+
     seeds = remove_small_objects(seeds,
                                  min_size=kwargs["wall_remove_small_objects_in_wall_min_size"])
+
     seeds = connected_components(seeds,
                                  connectivity=1,
                                  background=0)
