@@ -20,7 +20,7 @@ from projection import (
 )
 from annotation import write_cell_views
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 AutoName.prefix_format = "{:03d}_"
 
