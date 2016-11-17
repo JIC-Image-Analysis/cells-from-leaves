@@ -6,8 +6,9 @@ import json
 
 from geometry_mapper import original_image_point
 
+__version__ = "0.1.0"
 
-def write_csv(input_dir, output_file):
+def write_csv(input_dir, output_file, random):
     """Write csv file."""
     csv_lines = ["id,mx,my,cx,cy", ]
     json_fpaths = [os.path.join(input_dir, f)
@@ -30,6 +31,8 @@ def write_csv(input_dir, output_file):
         rel_pt = tuple([i - 0.5 for i in frac_pt])
 
         rotation = celldata["rotation"]
+        if random:
+            rotation = 0
         marker_pt = original_image_point(rel_point=rel_pt,
                                          rotation=rotation,
                                          ydim=celldata["ydim"],
@@ -50,6 +53,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input_dir", help="Input directory (with json files)")
     parser.add_argument("output_file", help="Output file")
+    parser.add_argument("--random", action="store_true", help="Use random rotation")
     args = parser.parse_args()
 
     # Check that the input directory and files exists.
@@ -57,7 +61,7 @@ def main():
         parser.error("{} not a directory".format(args.input_dir))
 
     # Run the analysis.
-    write_csv(args.input_dir, args.output_file)
+    write_csv(args.input_dir, args.output_file, args.random)
 
 if __name__ == "__main__":
     main()
