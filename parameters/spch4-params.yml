@@ -7,9 +7,9 @@ wall_percentile_filter_size: 2
 wall_zabove: -2
 wall_zbelow: 5
 wall_threshold_adaptive_block_size: 151
-wall_remove_small_objects_in_cell_min_size: 10
+wall_remove_small_objects_in_cell_min_size: 5
 wall_remove_small_objects_in_wall_min_size: 10
 wall_erode_step: True
 marker_zabove: 1
-marker_zbelow: 1
+marker_zbelow: 3
 marker_min_intensity: 0

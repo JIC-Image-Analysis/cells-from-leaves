@@ -12,4 +12,4 @@ wall_remove_small_objects_in_wall_min_size: 20
 wall_erode_step: True
 marker_zabove: -4
 marker_zbelow: 6
-marker_min_intensity: 50
+marker_min_intensity: 0
