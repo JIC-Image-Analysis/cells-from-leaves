@@ -4,8 +4,8 @@ marker_channel: 0
 surface_percentile: 97
 wall_percentile_filter_percentile: 95
 wall_percentile_filter_size: 2
-wall_zabove: -4
-wall_zbelow: 6
+wall_zabove: -6
+wall_zbelow: 8
 wall_threshold_adaptive_block_size: 151
 wall_remove_small_objects_in_cell_min_size: 20
 wall_remove_small_objects_in_wall_min_size: 20
