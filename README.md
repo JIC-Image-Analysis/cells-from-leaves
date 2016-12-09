@@ -53,5 +53,4 @@ the [cells-from-leaves-tagger](https://github.com/JIC-Image-Analysis/cells-from-
 
 ## Post processing: generate summary data
 
-- ``scripts/leaf_annotation.py``
-- ``scripts/tensor_csv.py``
+Run the ``scripts/post_tagging_processing.py`` script.
