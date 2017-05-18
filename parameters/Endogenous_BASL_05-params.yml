@@ -1,0 +1,15 @@
+---
+wall_channel: 0
+marker_channel: 1
+surface_percentile: 95
+wall_percentile_filter_percentile: 95
+wall_percentile_filter_size: 2
+wall_zabove: -2
+wall_zbelow: 6
+wall_threshold_adaptive_block_size: 51
+wall_remove_small_objects_in_cell_min_size: 5
+wall_remove_small_objects_in_wall_min_size: 50
+wall_erode_step: True
+marker_zabove: -2
+marker_zbelow: 6
+marker_min_intensity: 0
