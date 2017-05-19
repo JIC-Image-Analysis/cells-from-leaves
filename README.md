@@ -39,10 +39,17 @@ $ bash run_docker_container.sh
 [root@048bd4bd961c /]#
 ```
 
-Now you can run the image analysis.
+Now you can run the image analysis. Initially this will involve several rounds of
+finding suitable parameters.
+
+For this specific data analysis the parameters found have been saved in the
+``parameters`` directory.
+
+Below is an example command.
 
 ```
 [root@048bd4bd961c /]# python scripts/analysis.py --debug data/ output/
+python scripts/analysis.py data/leaf.tif data/mask.tif parameters/params.yml output/ --debug
 ```
 
 ## Post processing: manual point picking
