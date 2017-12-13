@@ -2,6 +2,29 @@
 
 ## Introduction
 
+This repository contains code to aid the annotation of cells in leafs with
+vectors from the centroid to a marker in the cell membrane.
+
+The code segments leafs into cells, producing a number of cell images to check
+the quality of the segmentation and for identifying the marker of interest.
+
+In order to make the analysis less biased the orientation of cell images are
+randomly rotated by 0, 90, 270 degrees. This, along with the fact that the
+cell images are cropped from the original leaf image, obfuscates the direction
+of the vector with regards to the context of the whole leaf.
+
+The centroid of the cells are determined programatically from the segmentation
+and the user can use the 
+[cells-from-leaves-tagger](https://github.com/JIC-Image-Analysis/cells-from-leaves-tagger)
+to manually annotate the location of the marker of interest in the cell membrane.
+The manual step is also used to validate the correctness of the cell segmentation.
+
+After manually annotating the segmented cells there is a post processing step for
+converting the annotations into a CSV file for further analysis.
+
+
+## Technology dependencies
+
 This image analysis project has been setup to take advantage of a technology
 known as Docker.
 
