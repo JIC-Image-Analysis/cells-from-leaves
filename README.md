@@ -84,3 +84,9 @@ the [cells-from-leaves-tagger](https://github.com/JIC-Image-Analysis/cells-from-
 ## Post processing: generate summary data
 
 Run the ``scripts/post_tagging_processing.py`` script.
+
+
+## Post processing: generate figures
+
+Figures for the paper were generated using the Matlab scripts stored in the
+``matlab_scripts`` directory.
